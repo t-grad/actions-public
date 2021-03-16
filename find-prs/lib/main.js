@@ -39,7 +39,7 @@ function main() {
             const prs = yield github.repos.listPullRequestsAssociatedWithCommit(Object.assign(Object.assign({}, github_1.context.repo), { commit_sha }));
             const result = [];
             for (const pr of prs.data) {
-                const merged = yield github.pulls.checkIfMerged(Object.assign(Object.assign({}, github_1.context.repo), { pull_number: pr.number }));
+                const merged = yield checkIfMerged(github, pr.number);
                 result.push({ pr: pr.number, merged });
             }
             core.setOutput('prs', JSON.stringify(result));
@@ -47,6 +47,22 @@ function main() {
         catch (error) {
             core.setFailed(error.message);
         }
+    });
+}
+function checkIfMerged(github, pr) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield github.pulls.checkIfMerged(Object.assign(Object.assign({}, github_1.context.repo), { pull_number: pr }));
+        }
+        catch (e) {
+            if (e.status == 404) {
+                return false;
+            }
+            else {
+                throw e;
+            }
+        }
+        return true;
     });
 }
 main();

@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
 import {context, getOctokit} from '@actions/github'
+import {GitHub} from '@actions/github/lib/utils'
 
 async function main(): Promise<void> {
   try {
@@ -14,10 +15,7 @@ async function main(): Promise<void> {
 
     const result = []
     for (const pr of prs.data) {
-      const merged = await github.pulls.checkIfMerged({
-        ...context.repo,
-        pull_number: pr.number
-      })
+      const merged = await checkIfMerged(github, pr.number)
       result.push({pr: pr.number, merged})
     }
 
@@ -25,6 +23,25 @@ async function main(): Promise<void> {
   } catch (error) {
     core.setFailed(error.message)
   }
+}
+
+async function checkIfMerged(
+  github: InstanceType<typeof GitHub>,
+  pr: number
+): Promise<boolean> {
+  try {
+    await github.pulls.checkIfMerged({
+      ...context.repo,
+      pull_number: pr
+    })
+  } catch (e) {
+    if (e.status === 404) {
+      return false
+    } else {
+      throw e
+    }
+  }
+  return true
 }
 
 main()
