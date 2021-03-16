@@ -1,0 +1,19 @@
+name: 'Parse GitHub Actions status'
+description: 'Parse GitHub Actions status event'
+author: 'Konstantin Gribov'
+inputs:
+  commit-sha:
+    description: Commit sha1 to check
+    required: true
+  github-token:
+    description: GitHub token
+    required: true
+outputs:
+  prs:
+    description: 'list of PRs example [{pr: "1", merged: false}]'
+branding:
+  icon: git-pull-request
+  color: green
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

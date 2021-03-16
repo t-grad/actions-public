@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  pull_request:
+    paths-ignore:
+      - '**.md'
+  push:
+    branches:
+      - main
+      - 'releases/*'
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build:
+    name: Build all actions
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Check formatting
+        run: yarn run format-check
+
+      - name: ESLint
+        run: yarn run lint
+
+      - name: Build
+        run: yarn run package
+
+      - name: Verify dist/ is committed and up-to-date
+        run: |
+          if [[ $(git status --porcelain)" != "" ]]; then
+            echo ----------------------------------------
+            echo git status
+            echo ----------------------------------------
+            git status
+            echo ----------------------------------------
+            echo git diff
+            echo ----------------------------------------
+            git diff
+            echo ----------------------------------------
+            echo Troubleshooting
+            echo ----------------------------------------
+            echo "::error::Unstaged changes detected. Locally try running: git clean -ffdx && npm ci && npm run pre-checkin"
+            exit 1
+          fi
+
+  test-find-prs:
+    name: Test find-prs action
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./find-prs
+        id: find-prs
+        with:
+          commit-sha: ${{ context.sha }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Action output
+        run: echo '${{ steps.find-prs.outputs.prs }}' | jq .
