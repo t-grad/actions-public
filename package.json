@@ -13,7 +13,7 @@
     "test": "yarn workspaces run test"
   },
   "workspaces": [
-    "find-pr"
+    "find-prs"
   ],
   "devDependencies": {
     "@types/node": "^14.14.35",
