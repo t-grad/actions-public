@@ -1,0 +1,15 @@
+= GitHub Actions repo
+
+image:https://github.com/t-grad/actions/actions/workflows/ci.yml/badge.svg[https://github.com/t-grad/actions/actions/workflows/ci.yml]
+
+== find-prs
+
+Action to find which PRs contain provided `commit-sha` and those PRs status (merged or not).
+
+Returns JSON array (serialized to string) of relevant PRs.
+
+.Result example
+[source,json]
+----
+[{"pr": "1", "merged": true}, {"pr": "2", "merged": false}]
+----
