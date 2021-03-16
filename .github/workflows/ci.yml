@@ -41,6 +41,9 @@ jobs:
         run: yarn run lint
 
       - name: Build
+        run: yarn run build
+
+      - name: Package
         run: yarn run package
 
       - name: Verify dist/ is committed and up-to-date
