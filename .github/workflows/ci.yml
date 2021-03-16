@@ -3,13 +3,13 @@ name: CI
 on:
   pull_request:
     paths-ignore:
-      - '**.md'
+      - '**.adoc'
   push:
     branches:
       - main
       - 'releases/*'
     paths-ignore:
-      - '**.md'
+      - '**.adoc'
 
 jobs:
   build:
