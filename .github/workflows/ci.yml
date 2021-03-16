@@ -59,7 +59,7 @@ jobs:
       - uses: ./find-prs
         id: find-prs
         with:
-          commit-sha: ${{ context.sha }}
+          commit-sha: ${{ github.sha }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Action output
