@@ -55,7 +55,7 @@ function checkIfMerged(github, pr) {
             yield github.pulls.checkIfMerged(Object.assign(Object.assign({}, github_1.context.repo), { pull_number: pr }));
         }
         catch (e) {
-            if (e.status == 404) {
+            if (e.status === 404) {
                 return false;
             }
             else {
