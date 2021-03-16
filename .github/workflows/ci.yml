@@ -45,7 +45,7 @@ jobs:
 
       - name: Verify dist/ is committed and up-to-date
         run: |
-          if [[ $(git status --porcelain)" != "" ]]; then
+          if [[ "$(git status --porcelain)" != "" ]]; then
             echo ----------------------------------------
             echo git status
             echo ----------------------------------------
