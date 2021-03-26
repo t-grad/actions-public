@@ -2,32 +2,12 @@ name: 'Generate settings.xml for on-prem Nexus'
 description: 'Generates maven setting.xml file for on-prem private Nexus'
 author: 'Konstantin Gribov'
 inputs:
-  base-url:
-    description: Nexus base URL (https://nexus.example.com)
-    required: true
-  id:
-    description: id for distributionManagement/servers array
-    required: true
-    default: nexus
-  username:
-    description: Environment var for Nexus username
-    required: true
-    default: NEXUS_USERNAME
-  password:
-    description: Environment var for Nexus password
-    required: true
-    default: NEXUS_PASSWORD
+  url:
+    description: Nexus base URL (https://nexus.example.com) if not set in .github/nexus.yml
+    required: false
   settings-path:
     description: Path where to save settings.xml (default ~/.m2/)
     required: false
-  repos:
-    description: Nexus repos to add
-    required: false
-    default: '[]'
-  plugin-repos:
-    description: Nexus plugin repos to add
-    required: false
-    default: '[]'
 branding:
   icon: database
   color: blue

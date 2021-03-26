@@ -1,0 +1,43 @@
+url: https://nexus.example.com
+auth:
+  default:
+    username: MAVEN_USERNAME
+    password: MAVEN_PASSWORD
+  nexus-public:
+    password: MAVEN_PUBLIC_PASSWORD
+default-policies:
+  releases:
+    enabled: true
+    checksumPolicy: warn
+    updatePolicy: daily
+  snapshots:
+    enabled: true
+    updatePolicy: 5
+repos:
+  nexus:
+    repo: releases
+    auth: true
+    snapshots:
+      enabled: true
+      checksumPolicy: warn
+      updatePolicy: always
+  nexus-thirdparty:
+    repo: thirdparty
+    releases:
+      enabled: true
+      checksumPolicy: fail
+      updatePolicy: daily
+    snapshots:
+      enabled: false
+  extra:
+    repo: extra
+    auth: true
+plugin-repos:
+  nexus-public:
+    repo: public
+    auth: true
+    releases:
+      updatePolicy: always
+    snapshots:
+      enabled: false
+      updatePolicy: 10
