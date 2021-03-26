@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "package": "ncc build --source-map --license licenses.txt",
-    "test": "jest"
+    "test": "jest --passWithNoTests"
   },
   "dependencies": {
     "@actions/core": "^1.2.6",
