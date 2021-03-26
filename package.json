@@ -5,6 +5,7 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
+    "clean": "yarn workspaces run clean",
     "build": "yarn workspaces run build",
     "format": "prettier --write **/*.ts",
     "format-check": "prettier --check **/*.ts",

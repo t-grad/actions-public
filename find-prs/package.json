@@ -5,6 +5,7 @@
   "description": "Action to parse",
   "main": "lib/main.js",
   "scripts": {
+    "clean": "rm -rf lib/ dist/",
     "build": "tsc",
     "package": "ncc build --source-map --license licenses.txt",
     "test": "jest --passWithNoTests"
