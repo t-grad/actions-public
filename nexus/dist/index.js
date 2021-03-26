@@ -92,12 +92,20 @@ exports.parse = parse;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.generate = void 0;
 const xmlbuilder2_1 = __nccwpck_require__(686);
+function generateRepoPolicy(policy) {
+    if (policy && typeof policy.updatePolicy === 'number') {
+        return Object.assign({ updatePolicy: `interval:${policy.updatePolicy}` }, policy);
+    }
+    else {
+        return policy;
+    }
+}
 function generateRepo(baseUrl, id, repo) {
     return {
         id,
         url: `${baseUrl}/repository/${repo.repo}`,
-        releases: repo.releases,
-        snapshots: repo.snapshots
+        releases: generateRepoPolicy(repo.releases),
+        snapshots: generateRepoPolicy(repo.snapshots)
     };
 }
 function generate(config) {

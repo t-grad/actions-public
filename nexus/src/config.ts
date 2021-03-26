@@ -11,13 +11,13 @@ export interface Config {
   pluginRepos: {[key: string]: RepoConfig}
 }
 
-interface AuthConfig {
+export interface AuthConfig {
   default: Credentials
 
   [key: string]: Credentials
 }
 
-interface Credentials {
+export interface Credentials {
   username?: string
   password?: string
 }
@@ -29,12 +29,12 @@ export interface RepoConfig extends RepoPolicyConfig {
 
 type RepoConfigMap = {[key: string]: RepoConfig}
 
-interface RepoPolicyConfig {
+export interface RepoPolicyConfig {
   releases?: RepoPolicy
   snapshots?: RepoPolicy
 }
 
-interface RepoPolicy {
+export interface RepoPolicy {
   enabled?: boolean
   checksumPolicy?: RepoChecksumPolicy
   updatePolicy?: RepoUpdatePolicy

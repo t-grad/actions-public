@@ -1,5 +1,15 @@
 import {create as xmlCreate} from 'xmlbuilder2'
-import {Config, RepoConfig} from './config'
+import {Config, RepoConfig, RepoPolicy} from './config'
+
+function generateRepoPolicy(
+  policy?: RepoPolicy
+): {[key: string]: any} | undefined {
+  if (policy && typeof policy.updatePolicy === 'number') {
+    return {updatePolicy: `interval:${policy.updatePolicy}`, ...policy}
+  } else {
+    return policy
+  }
+}
 
 function generateRepo(
   baseUrl: string,
@@ -9,8 +19,8 @@ function generateRepo(
   return {
     id,
     url: `${baseUrl}/repository/${repo.repo}`,
-    releases: repo.releases,
-    snapshots: repo.snapshots
+    releases: generateRepoPolicy(repo.releases),
+    snapshots: generateRepoPolicy(repo.snapshots)
   }
 }
 
