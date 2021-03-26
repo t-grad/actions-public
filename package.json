@@ -10,7 +10,8 @@
     "format-check": "prettier --check **/*.ts",
     "lint": "eslint */src/**/*.ts",
     "package": "yarn workspaces run package",
-    "test": "yarn workspaces run test"
+    "test": "yarn workspaces run test",
+    "all": "yarn run format && yarn run lint && yarn run build && yarn run test && yarn run package"
   },
   "workspaces": [
     "find-prs",
