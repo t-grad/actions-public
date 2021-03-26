@@ -87,3 +87,41 @@ jobs:
 
       - name: Action output
         run: echo '${{ steps.find-prs.outputs.prs }}' | jq .
+
+  test-nexus:
+    name: Test nexus aciton
+    runs-on: ubuntu-latest
+    needs:
+      - build
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./nexus
+        id: nexus
+        with:
+          base-url: https://nexus.example.com
+          repos: |
+            [ {
+              "id": "nexus",
+              "repo": "public",
+              "auth": true,
+              "releases": {"enabled": true, "checksumPolicy": "warn"},
+              "snapshots": {"enabled": true, "checksumPolicy": "warn"}
+            }, {
+              "id": "nexus-thirdparty",
+              "repo": "thirdparty",
+              "auth": true,
+              "releases": {"enabled": true, "checksumPolicy": "warn"},
+              "snapshots": {"enabled": false}
+            } ]
+          plugin-repos: |
+            [ {
+              "id": "nexus",
+              "repo": "public",
+              "auth": true,
+              "releases": {"enabled": true, "checksumPolicy": "warn"},
+              "snapshots": {"enabled": false}
+            } ]
+      - name: Action output
+        run: cat ~/.m2/settings.xml
