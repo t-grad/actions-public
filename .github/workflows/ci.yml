@@ -50,27 +50,37 @@ jobs:
       - name: Package
         run: yarn run package
 
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    if: ${{ !env.ACT }}
+    needs:
+      - build
+
+    steps:
       - name: Check if */dist/ updated
         id: git-dirty
-        if: ${{ !env.ACT }}
         run: echo "::set-output name=dirty::$([[ "$(git status --porcelain)" != "" ]] && echo true || echo false)"
 
-      - name: Publish
-        if: ${{ !env.ACT && steps.git-dirty.outputs.dirty }}
+      - run: |
+          echo "dirty: ${{ steps.git-dirty.outputs.dirty }}"
+
+      - name: Configure git user
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
-          echo "::group::Add */dist/ files and commit"
+      - name: Add */dist/ files and commit
+        if: ${{ steps.git-dirty.outputs.dirty }}
+        run: |
           git add */dist/*
-          git status
           git commit -m "chore(dist): Update */dist/ files"
-          echo "::endgroup::"
 
-          git push origin ${{ github.ref }}
+      - name: Push changes to ${{ github.ref }}
+        if: ${{ steps.git-dirty.outputs.dirty }}
+        run: git push origin ${{ github.ref }}
 
       - name: Verify no uncommitted files left
-        if: ${{ !env.ACT }}
         run: |
           if [[ "$(git status --porcelain)" != "" ]]; then
             echo ----------------------------------------
@@ -92,7 +102,7 @@ jobs:
     name: Test find-prs action
     runs-on: ubuntu-latest
     needs:
-      - build
+      - publish
 
     steps:
       - uses: actions/checkout@v2
@@ -110,7 +120,7 @@ jobs:
     name: Test nexus aciton
     runs-on: ubuntu-latest
     needs:
-      - build
+      - publish
 
     steps:
       - uses: actions/checkout@v2
