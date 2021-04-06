@@ -18,13 +18,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install yarn
-        if: ${{ env.ACT }}
-        run: npm -g install yarn
-
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        if: ${{ !env.ACT }}
         run: echo "::set-output name=dir::$(yarn cache dir)"
 
       - uses: actions/cache@v2
