@@ -48,7 +48,7 @@ jobs:
 
       - name: Check if */dist/ updated
         id: git-dirty
-        run: echo "::set-output name=dirty::$([[ "$(git status --porcelain)" != "" ]] && echo true || echo false)"
+        run: echo "::set-output name=dirty::$([[ "$(git status --porcelain)" != "" ]] && echo -n 1 || echo -n 0)"
 
       - name: Configure git user
         run: |
