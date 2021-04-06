@@ -50,7 +50,26 @@ jobs:
       - name: Package
         run: yarn run package
 
-      - name: Verify dist/ is committed and up-to-date
+      - run: echo "::group::Publish"
+
+      - name: Check if */dist/ updated
+        id: git-dirty
+        if: ${{ !env.ACT }}
+        run: echo "::set-output name=dirty::$([[ "$(git status --porcelain)" == "" ]] && echo true || echo false)"
+
+      - name: Add */dist/ files and commit
+        if: ${{ !env.ACT && steps.git-dirty.outputs.dirty }}
+        run: |
+          git add */dist/*
+          git commit -m "chore(dist): Update */dist/ files"
+
+      - name: Push changes to ${{ github.ref }}
+        if: ${{ !env.ACT && steps.git-dirty.outputs.dirty }}
+        run: git push origin ${{ github.ref }}
+
+      - run: echo "::endgroup::"
+
+      - name: Verify no uncommitted files left
         if: ${{ !env.ACT }}
         run: |
           if [[ "$(git status --porcelain)" != "" ]]; then
