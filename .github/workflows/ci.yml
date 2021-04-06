@@ -22,7 +22,8 @@ jobs:
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
 
-      - uses: actions/cache@v2
+      - name: Cache
+        uses: actions/cache@v2
         if: ${{ !env.ACT }}
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -57,7 +58,10 @@ jobs:
       - name: Add */dist/ files and commit
         if: ${{ steps.git-dirty.outputs.dirty }}
         run: |
+          echo "::group::Add files"
           git add */dist/*
+          git status
+          echo "::endgroup::"
           git commit -m "chore(dist): Update */dist/ files"
 
       - name: Push changes to ${{ github.ref }}
