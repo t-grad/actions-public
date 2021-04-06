@@ -57,6 +57,12 @@ jobs:
         if: ${{ !env.ACT }}
         run: echo "::set-output name=dirty::$([[ "$(git status --porcelain)" == "" ]] && echo true || echo false)"
 
+      - name: Configure git user
+        if: ${{ !env.ACT && steps.git-dirty.outputs.dirty }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
       - name: Add */dist/ files and commit
         if: ${{ !env.ACT && steps.git-dirty.outputs.dirty }}
         run: |
