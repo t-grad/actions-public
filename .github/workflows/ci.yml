@@ -50,30 +50,24 @@ jobs:
       - name: Package
         run: yarn run package
 
-      - run: echo "::group::Publish"
-
       - name: Check if */dist/ updated
         id: git-dirty
         if: ${{ !env.ACT }}
         run: echo "::set-output name=dirty::$([[ "$(git status --porcelain)" != "" ]] && echo true || echo false)"
 
-      - name: Configure git user
+      - name: Publish
         if: ${{ !env.ACT && steps.git-dirty.outputs.dirty }}
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
-      - name: Add */dist/ files and commit
-        if: ${{ !env.ACT && steps.git-dirty.outputs.dirty }}
-        run: |
+          echo "::group::Add */dist/ files and commit"
           git add */dist/*
+          git status
           git commit -m "chore(dist): Update */dist/ files"
+          echo "::endgroup::"
 
-      - name: Push changes to ${{ github.ref }}
-        if: ${{ !env.ACT && steps.git-dirty.outputs.dirty }}
-        run: git push origin ${{ github.ref }}
-
-      - run: echo "::endgroup::"
+          git push origin ${{ github.ref }}
 
       - name: Verify no uncommitted files left
         if: ${{ !env.ACT }}
