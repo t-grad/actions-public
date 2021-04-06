@@ -55,7 +55,7 @@ jobs:
       - name: Check if */dist/ updated
         id: git-dirty
         if: ${{ !env.ACT }}
-        run: echo "::set-output name=dirty::$([[ "$(git status --porcelain)" == "" ]] && echo true || echo false)"
+        run: echo "::set-output name=dirty::$([[ "$(git status --porcelain)" != "" ]] && echo true || echo false)"
 
       - name: Configure git user
         if: ${{ !env.ACT && steps.git-dirty.outputs.dirty }}
