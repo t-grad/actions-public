@@ -48,7 +48,9 @@ jobs:
 
       - name: Check if */dist/ updated
         id: git-dirty
-        run: echo "::set-output name=dirty::$([[ "$(git status --porcelain)" != "" ]] && echo -n 1 || echo -n 0)"
+        run: |
+          STATUS=$(git status --porcelain)
+          echo "::set-output name=status::${STATUS//$'\n'/\\n}"
 
       - name: Configure git user
         run: |
@@ -56,21 +58,19 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
       - name: Add */dist/ files and commit
-        if: ${{ steps.git-dirty.outputs.dirty }}
+        if: ${{ steps.git-dirty.outputs.status != '' }}
         run: |
-          echo "::group::Add files"
           git add */dist/*
           git status
-          echo "::endgroup::"
           git commit -m "chore(dist): Update */dist/ files"
 
       - name: Push changes to ${{ github.ref }}
-        if: ${{ steps.git-dirty.outputs.dirty && !env.ACT }}
+        if: ${{ steps.git-dirty.outputs.status != '' && !env.ACT }}
         run: git push origin ${{ github.ref }}
 
       - name: Verify no uncommitted files left
         run: |
-          if [[ "$(git status --porcelain)" != "" ]]; then
+          if [[ "${{ steps.git-dirty.outputs.status }}" != "" ]]; then
             echo ----------------------------------------
             echo git status
             echo ----------------------------------------
@@ -82,7 +82,7 @@ jobs:
             echo ----------------------------------------
             echo Troubleshooting
             echo ----------------------------------------
-            echo "::error::Unstaged changes detected. Locally try running: git clean -ffdx && npm ci && npm run pre-checkin"
+            echo "::error::Unstaged changes detected. Locally try running: git clean -ffdx && yarn install && yarn run all"
             exit 1
           fi
 
