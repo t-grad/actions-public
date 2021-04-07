@@ -70,7 +70,7 @@ jobs:
 
       - name: Verify no uncommitted files left
         run: |
-          if [[ "${{ steps.git-dirty.outputs.status }}" != "" ]]; then
+          if [[ "$(git status --porcelain)" != "" ]]; then
             echo ----------------------------------------
             echo git status
             echo ----------------------------------------
