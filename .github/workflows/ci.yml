@@ -64,10 +64,6 @@ jobs:
           git status
           git commit -m "chore(dist): Update */dist/ files"
 
-      - name: Push changes to ${{ github.ref }}
-        if: ${{ steps.git-dirty.outputs.status != '' && github.event_name == 'push' && !env.ACT }}
-        run: git push origin ${{ github.ref }}
-
       - name: Verify no uncommitted files left
         run: |
           if [[ "$(git status --porcelain)" != "" ]]; then
@@ -85,6 +81,10 @@ jobs:
             echo "::error::Unstaged changes detected. Locally try running: git clean -ffdx && yarn install && yarn run all"
             exit 1
           fi
+
+      - name: Push changes to ${{ github.ref }}
+        if: ${{ steps.git-dirty.outputs.status != '' && !env.ACT }}
+        run: git push
 
   test-find-prs:
     name: Test find-prs action
