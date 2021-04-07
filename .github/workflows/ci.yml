@@ -65,7 +65,7 @@ jobs:
           git commit -m "chore(dist): Update */dist/ files"
 
       - name: Push changes to ${{ github.ref }}
-        if: ${{ steps.git-dirty.outputs.status != '' && !env.ACT }}
+        if: ${{ steps.git-dirty.outputs.status != '' && github.event_name == 'push' && !env.ACT }}
         run: git push origin ${{ github.ref }}
 
       - name: Verify no uncommitted files left
