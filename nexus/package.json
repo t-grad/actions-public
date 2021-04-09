@@ -14,7 +14,7 @@
     "@actions/core": "^1.2.6",
     "@actions/io": "^1.1.0",
     "ts-dedent": "^2.1.1",
-    "xmlbuilder2": "^2.1.2",
+    "xmlbuilder2": "^2.4.1",
     "yaml": "^1.10.2"
   }
 }

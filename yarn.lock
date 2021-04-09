@@ -769,11 +769,6 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.37.tgz#a3dd8da4eb84a996c36e331df98d82abd76b516e"
   integrity sha512-XYmBiy+ohOR4Lh5jE379fV2IU+6Jn4g5qASinhitfyO71b/sCo6MKsMLF5tc7Zf2CE8hViVQyYSobJNke8OvUw==
 
-"@types/node@14.6.2":
-  version "14.6.2"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.6.2.tgz#264b44c5a28dfa80198fc2f7b6d3c8a054b9491f"
-  integrity sha512-onlIwbaeqvZyniGPfdw/TEhKIh79pz66L1q06WUQqJLnAb6wbjvOtepLYTGHTqzdXgBYIE3ZdmqHDGsRsbBz7A==
-
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.0.tgz#e486d0d97396d79beedd0a6e33f4534ff6b4973e"
@@ -4898,15 +4893,15 @@ xml-name-validator@^3.0.0:
   resolved "https://registry.yarnpkg.com/xml-name-validator/-/xml-name-validator-3.0.0.tgz#6ae73e06de4d8c6e47f9fb181f78d648ad457c6a"
   integrity sha512-A5CUptxDsvxKJEU3yO6DuWBSJz/qizqzJKOMIfUJHETbBw/sFaDxgd6fxm1ewUaM0jZ444Fc5vC5ROYurg/4Pw==
 
-xmlbuilder2@^2.1.2:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/xmlbuilder2/-/xmlbuilder2-2.4.0.tgz#fb6c5171bef1bcb984c88cfef5210e17b7b841cd"
-  integrity sha512-KrOVUGD65xTQ7ZA+GMQGdBSpe1Ufu5ylCQSYVk6QostySDkxPmAQ0WWIu7dR3JjLfVbF22RFQX7KyrZ6VTLcQg==
+xmlbuilder2@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/xmlbuilder2/-/xmlbuilder2-2.4.1.tgz#899c783a833188c5a5aa6f3c5428a3963f3e479d"
+  integrity sha512-vliUplZsk5vJnhxXN/mRcij/AE24NObTUm/Zo4vkLusgayO6s3Et5zLEA14XZnY1c3hX5o1ToR0m0BJOPy0UvQ==
   dependencies:
     "@oozcitak/dom" "1.15.8"
     "@oozcitak/infra" "1.0.8"
     "@oozcitak/util" "8.3.8"
-    "@types/node" "14.6.2"
+    "@types/node" "*"
     js-yaml "3.14.0"
 
 xmlchars@^2.2.0:
