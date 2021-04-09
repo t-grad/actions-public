@@ -27280,18 +27280,48 @@ var XMLBuilderImpl = /** @class */ (function () {
     };
     /** @inheritdoc */
     XMLBuilderImpl.prototype.txt = function (content) {
+        if (content === null || content === undefined) {
+            if (this._options.keepNullNodes) {
+                // keep null nodes
+                content = "";
+            }
+            else {
+                // skip null|undefined nodes
+                return this;
+            }
+        }
         var child = this._doc.createTextNode(dom_1.sanitizeInput(content, this._options.invalidCharReplacement));
         this.node.appendChild(child);
         return this;
     };
     /** @inheritdoc */
     XMLBuilderImpl.prototype.com = function (content) {
+        if (content === null || content === undefined) {
+            if (this._options.keepNullNodes) {
+                // keep null nodes
+                content = "";
+            }
+            else {
+                // skip null|undefined nodes
+                return this;
+            }
+        }
         var child = this._doc.createComment(dom_1.sanitizeInput(content, this._options.invalidCharReplacement));
         this.node.appendChild(child);
         return this;
     };
     /** @inheritdoc */
     XMLBuilderImpl.prototype.dat = function (content) {
+        if (content === null || content === undefined) {
+            if (this._options.keepNullNodes) {
+                // keep null nodes
+                content = "";
+            }
+            else {
+                // skip null|undefined nodes
+                return this;
+            }
+        }
         var child = this._doc.createCDATASection(dom_1.sanitizeInput(content, this._options.invalidCharReplacement));
         this.node.appendChild(child);
         return this;
@@ -27300,6 +27330,16 @@ var XMLBuilderImpl = /** @class */ (function () {
     XMLBuilderImpl.prototype.ins = function (target, content) {
         var _this = this;
         if (content === void 0) { content = ''; }
+        if (content === null || content === undefined) {
+            if (this._options.keepNullNodes) {
+                // keep null nodes
+                content = "";
+            }
+            else {
+                // skip null|undefined nodes
+                return this;
+            }
+        }
         if (util_1.isArray(target) || util_1.isSet(target)) {
             util_1.forEachArray(target, function (item) {
                 item += "";
@@ -28024,11 +28064,12 @@ exports.DefaultXMLBuilderCBOptions = {
 /***/ }),
 
 /***/ 6301:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+var dom_1 = __nccwpck_require__(8239);
 /**
  * Pre-serializes XML nodes.
  */
@@ -28064,6 +28105,9 @@ var BaseReader = /** @class */ (function () {
     };
     BaseReader.prototype._attribute = function (parent, namespace, name, value) {
         return (namespace === undefined ? parent.att(name, value) : parent.att(namespace, name, value));
+    };
+    BaseReader.prototype._sanitize = function (str) {
+        return dom_1.sanitizeInput(str, this._builderOptions.invalidCharReplacement);
     };
     /**
      * Main parser function which parses the given object and returns an XMLBuilder.
@@ -28149,6 +28193,14 @@ var BaseReader = /** @class */ (function () {
     BaseReader.prototype.attribute = function (parent, namespace, name, value) {
         return this._attribute(parent, namespace, name, value);
     };
+    /**
+     * Sanitizes input strings.
+     *
+     * @param str - input string
+     */
+    BaseReader.prototype.sanitize = function (str) {
+        return this._sanitize(str);
+    };
     return BaseReader;
 }());
 exports.BaseReader = BaseReader;
@@ -28222,7 +28274,6 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 var util_1 = __nccwpck_require__(651);
 var BaseReader_1 = __nccwpck_require__(6301);
-var dom_1 = __nccwpck_require__(8239);
 /**
  * Parses XML nodes from objects and arrays.
  * ES6 maps and sets are also supoorted.
@@ -28241,11 +28292,6 @@ var ObjectReader = /** @class */ (function (_super) {
     ObjectReader.prototype._parse = function (node, obj) {
         var _this = this;
         var options = this._builderOptions;
-        // sanitizes input characters
-        var invalidCharReplacement = options.invalidCharReplacement;
-        var s = function (str) {
-            return dom_1.sanitizeInput(str, invalidCharReplacement);
-        };
         var lastChild = null;
         if (util_1.isFunction(obj)) {
             // evaluate if function
@@ -28269,12 +28315,12 @@ var ObjectReader = /** @class */ (function (_super) {
                         }
                         else /* if (isMap(val) || isObject(val)) */ {
                             util_1.forEachObject(val, function (attrKey, attrVal) {
-                                lastChild = _this.attribute(node, undefined, s(attrKey), s(attrVal)) || lastChild;
+                                lastChild = _this.attribute(node, undefined, _this.sanitize(attrKey), _this.sanitize(attrVal)) || lastChild;
                             });
                         }
                     }
                     else {
-                        lastChild = _this.attribute(node, undefined, s(key.substr(options.convert.att.length)), s(val)) || lastChild;
+                        lastChild = _this.attribute(node, undefined, _this.sanitize(key.substr(options.convert.att.length)), _this.sanitize(val)) || lastChild;
                     }
                 }
                 else if (!options.ignoreConverters && key.indexOf(options.convert.text) === 0) {
@@ -28284,25 +28330,25 @@ var ObjectReader = /** @class */ (function (_super) {
                         lastChild = _this.parse(node, val);
                     }
                     else {
-                        lastChild = _this.text(node, s(val)) || lastChild;
+                        lastChild = _this.text(node, _this.sanitize(val)) || lastChild;
                     }
                 }
                 else if (!options.ignoreConverters && key.indexOf(options.convert.cdata) === 0) {
                     // cdata node
                     if (util_1.isArray(val) || util_1.isSet(val)) {
-                        util_1.forEachArray(val, function (item) { return lastChild = _this.cdata(node, s(item)) || lastChild; }, _this);
+                        util_1.forEachArray(val, function (item) { return lastChild = _this.cdata(node, _this.sanitize(item)) || lastChild; }, _this);
                     }
                     else {
-                        lastChild = _this.cdata(node, s(val)) || lastChild;
+                        lastChild = _this.cdata(node, _this.sanitize(val)) || lastChild;
                     }
                 }
                 else if (!options.ignoreConverters && key.indexOf(options.convert.comment) === 0) {
                     // comment node
                     if (util_1.isArray(val) || util_1.isSet(val)) {
-                        util_1.forEachArray(val, function (item) { return lastChild = _this.comment(node, s(item)) || lastChild; }, _this);
+                        util_1.forEachArray(val, function (item) { return lastChild = _this.comment(node, _this.sanitize(item)) || lastChild; }, _this);
                     }
                     else {
-                        lastChild = _this.comment(node, s(val)) || lastChild;
+                        lastChild = _this.comment(node, _this.sanitize(val)) || lastChild;
                     }
                 }
                 else if (!options.ignoreConverters && key.indexOf(options.convert.ins) === 0) {
@@ -28311,18 +28357,18 @@ var ObjectReader = /** @class */ (function (_super) {
                         var insIndex = val.indexOf(' ');
                         var insTarget = (insIndex === -1 ? val : val.substr(0, insIndex));
                         var insValue = (insIndex === -1 ? '' : val.substr(insIndex + 1));
-                        lastChild = _this.instruction(node, s(insTarget), s(insValue)) || lastChild;
+                        lastChild = _this.instruction(node, _this.sanitize(insTarget), _this.sanitize(insValue)) || lastChild;
                     }
                     else if (util_1.isArray(val) || util_1.isSet(val)) {
                         util_1.forEachArray(val, function (item) {
                             var insIndex = item.indexOf(' ');
                             var insTarget = (insIndex === -1 ? item : item.substr(0, insIndex));
                             var insValue = (insIndex === -1 ? '' : item.substr(insIndex + 1));
-                            lastChild = _this.instruction(node, s(insTarget), s(insValue)) || lastChild;
+                            lastChild = _this.instruction(node, _this.sanitize(insTarget), _this.sanitize(insValue)) || lastChild;
                         }, _this);
                     }
                     else /* if (isMap(target) || isObject(target)) */ {
-                        util_1.forEachObject(val, function (insTarget, insValue) { return lastChild = _this.instruction(node, s(insTarget), s(insValue)) || lastChild; }, _this);
+                        util_1.forEachObject(val, function (insTarget, insValue) { return lastChild = _this.instruction(node, _this.sanitize(insTarget), _this.sanitize(insValue)) || lastChild; }, _this);
                     }
                 }
                 else if ((util_1.isArray(val) || util_1.isSet(val)) && util_1.isEmpty(val)) {
@@ -28330,7 +28376,7 @@ var ObjectReader = /** @class */ (function (_super) {
                 }
                 else if ((util_1.isMap(val) || util_1.isObject(val)) && util_1.isEmpty(val)) {
                     // empty objects produce one node
-                    lastChild = _this.element(node, undefined, s(key)) || lastChild;
+                    lastChild = _this.element(node, undefined, _this.sanitize(key)) || lastChild;
                 }
                 else if (!options.keepNullNodes && (val == null)) {
                     // skip null and undefined nodes
@@ -28345,7 +28391,7 @@ var ObjectReader = /** @class */ (function (_super) {
                 }
                 else if (util_1.isMap(val) || util_1.isObject(val)) {
                     // create a parent node
-                    var parent = _this.element(node, undefined, key);
+                    var parent = _this.element(node, undefined, _this.sanitize(key));
                     if (parent) {
                         lastChild = parent;
                         // expand child nodes under parent
@@ -28354,15 +28400,15 @@ var ObjectReader = /** @class */ (function (_super) {
                 }
                 else if (val != null && val !== '') {
                     // leaf element node with a single text node
-                    var parent = _this.element(node, undefined, key);
+                    var parent = _this.element(node, undefined, _this.sanitize(key));
                     if (parent) {
                         lastChild = parent;
-                        _this.text(parent, s(val));
+                        _this.text(parent, _this.sanitize(val));
                     }
                 }
                 else {
                     // leaf element node
-                    lastChild = _this.element(node, undefined, s(key)) || lastChild;
+                    lastChild = _this.element(node, undefined, _this.sanitize(key)) || lastChild;
                 }
             }, this);
         }
@@ -28425,7 +28471,6 @@ var XMLStringLexer_1 = __nccwpck_require__(3630);
 var interfaces_1 = __nccwpck_require__(2228);
 var infra_1 = __nccwpck_require__(8100);
 var algorithm_1 = __nccwpck_require__(5106);
-var dom_1 = __nccwpck_require__(8239);
 var BaseReader_1 = __nccwpck_require__(6301);
 /**
  * Parses XML nodes from an XML document string.
@@ -28444,18 +28489,13 @@ var XMLReader = /** @class */ (function (_super) {
     XMLReader.prototype._parse = function (node, str) {
         var e_1, _a, e_2, _b;
         var lexer = new XMLStringLexer_1.XMLStringLexer(str, { skipWhitespaceOnlyText: true });
-        // sanitizes input characters
-        var invalidCharReplacement = this._builderOptions.invalidCharReplacement;
-        var s = function (str) {
-            return dom_1.sanitizeInput(str, invalidCharReplacement);
-        };
         var context = node;
         var token = lexer.nextToken();
         while (token.type !== interfaces_1.TokenType.EOF) {
             switch (token.type) {
                 case interfaces_1.TokenType.Declaration:
                     var declaration = token;
-                    var version = s(declaration.version);
+                    var version = this.sanitize(declaration.version);
                     if (version !== "1.0") {
                         throw new Error("Invalid xml version: " + version);
                     }
@@ -28463,36 +28503,36 @@ var XMLReader = /** @class */ (function (_super) {
                         version: version
                     };
                     if (declaration.encoding) {
-                        builderOptions.encoding = s(declaration.encoding);
+                        builderOptions.encoding = this.sanitize(declaration.encoding);
                     }
                     if (declaration.standalone) {
-                        builderOptions.standalone = (s(declaration.standalone) === "yes");
+                        builderOptions.standalone = (this.sanitize(declaration.standalone) === "yes");
                     }
                     context.set(builderOptions);
                     break;
                 case interfaces_1.TokenType.DocType:
                     var doctype = token;
-                    context = this.docType(context, s(doctype.name), s(doctype.pubId), s(doctype.sysId)) || context;
+                    context = this.docType(context, this.sanitize(doctype.name), this.sanitize(doctype.pubId), this.sanitize(doctype.sysId)) || context;
                     break;
                 case interfaces_1.TokenType.CDATA:
                     var cdata = token;
-                    context = this.cdata(context, s(cdata.data)) || context;
+                    context = this.cdata(context, this.sanitize(cdata.data)) || context;
                     break;
                 case interfaces_1.TokenType.Comment:
                     var comment = token;
-                    context = this.comment(context, s(comment.data)) || context;
+                    context = this.comment(context, this.sanitize(comment.data)) || context;
                     break;
                 case interfaces_1.TokenType.PI:
                     var pi = token;
-                    context = this.instruction(context, s(pi.target), s(pi.data)) || context;
+                    context = this.instruction(context, this.sanitize(pi.target), this.sanitize(pi.data)) || context;
                     break;
                 case interfaces_1.TokenType.Text:
                     var text = token;
-                    context = this.text(context, s(text.data)) || context;
+                    context = this.text(context, this.sanitize(text.data)) || context;
                     break;
                 case interfaces_1.TokenType.Element:
                     var element = token;
-                    var elementName = s(element.name);
+                    var elementName = this.sanitize(element.name);
                     // inherit namespace from parent
                     var _c = __read(algorithm_1.namespace_extractQName(elementName), 1), prefix = _c[0];
                     var namespace = context.node.lookupNamespaceURI(prefix);
@@ -28503,8 +28543,8 @@ var XMLReader = /** @class */ (function (_super) {
                     try {
                         for (var _d = (e_1 = void 0, __values(element.attributes)), _e = _d.next(); !_e.done; _e = _d.next()) {
                             var _f = __read(_e.value, 2), attName = _f[0], attValue = _f[1];
-                            attName = s(attName);
-                            attValue = s(attValue);
+                            attName = this.sanitize(attName);
+                            attValue = this.sanitize(attValue);
                             if (attName === "xmlns") {
                                 namespace = attValue;
                             }
@@ -28536,8 +28576,8 @@ var XMLReader = /** @class */ (function (_super) {
                         // assign attributes
                         for (var _h = (e_2 = void 0, __values(element.attributes)), _j = _h.next(); !_j.done; _j = _h.next()) {
                             var _k = __read(_j.value, 2), attName = _k[0], attValue = _k[1];
-                            attName = s(attName);
-                            attValue = s(attValue);
+                            attName = this.sanitize(attName);
+                            attValue = this.sanitize(attValue);
                             var _l = __read(algorithm_1.namespace_extractQName(attName), 2), attPrefix = _l[0], attLocalName = _l[1];
                             var attNamespace = null;
                             if (attPrefix === "xmlns" || (attPrefix === null && attLocalName === "xmlns")) {
